@@ -19,6 +19,7 @@ const stages = computed(() => cfg.value.stages ?? []);
 const idx = ref(0);
 const current = computed(() => stages.value[idx.value] ?? null);
 const busy = ref(false);
+const canGoBack = computed(() => idx.value > 0);
 
 const host = ref(null);
 
@@ -47,7 +48,23 @@ const { register } = useBillboards(stage, () => {
   return [{ key: 'hotspot', position: h.position }];
 });
 
-/* ---- 镜头推进 + 换场 ---- */
+/* ---- 镜头推进 / 回退 + 换场 ---- */
+
+/** 在「离某个点很近」的位置，用于推进与拉开的过渡 */
+function approachPoint(stage, point, distance) {
+  const THREE = stage.THREE;
+  const target = new THREE.Vector3(...point);
+  return target
+    .clone()
+    .addScaledVector(stage.camera.position.clone().sub(target).normalize(), distance)
+    .toArray();
+}
+
+/** 在某个点外侧「退开一点」的位置（回退时从上一级光点外面拉开用） */
+function pullbackPoint(point, scale = 1.5, lift = 0.6) {
+  return [point[0] * scale, point[1] + lift, point[2] * scale];
+}
+
 async function advance() {
   const s = stage.value;
   const h = current.value?.hotspot;
@@ -56,14 +73,12 @@ async function advance() {
 
   busy.value = true;
   try {
-    const THREE = s.THREE;
-    const target = new THREE.Vector3(...h.position);
     // 1) 向光点推进到很近的位置
-    const approach = target
-      .clone()
-      .addScaledVector(s.camera.position.clone().sub(target).normalize(), 0.9)
-      .toArray();
-    await s.flyTo(approach, h.position, cfg.value.transition?.durationMs ?? 1200);
+    await s.flyTo(
+      approachPoint(s, h.position, 0.9),
+      h.position,
+      cfg.value.transition?.durationMs ?? 1200,
+    );
 
     // 2) 换到下一级场景
     idx.value = nextIdx;
@@ -81,6 +96,36 @@ async function advance() {
     busy.value = false;
   }
 }
+
+/** 返回上一级 —— 推进的镜像动作 */
+async function goBack() {
+  const s = stage.value;
+  const prevIdx = idx.value - 1;
+  if (!s || busy.value || prevIdx < 0) return;
+
+  busy.value = true;
+  try {
+    // 1) 先朝当前场景中心推进（等于「退出这一级」）
+    await s.flyTo([0, 0.4, 1.7], [0, 0, 0], 560);
+
+    // 2) 换回上一级场景
+    idx.value = prevIdx;
+    await nextTick();
+    if (!stage.value) return;
+
+    // 3) 从上一级那个光点的外侧拉开，回到该级机位
+    const h = current.value?.hotspot;
+    const from = h?.position ? pullbackPoint(h.position) : [0, 0.5, 2.0];
+    s.snapTo(from, h?.position ?? [0, 0, 0]);
+    await s.flyTo(
+      stages.value[prevIdx].cameraPos ?? [0, 4, 14],
+      stages.value[prevIdx].cameraTarget ?? [0, 0, 0],
+      900,
+    );
+  } finally {
+    busy.value = false;
+  }
+}
 </script>
 
 <template>
@@ -88,16 +133,23 @@ async function advance() {
     <div ref="host" class="sz__canvas"></div>
 
     <div class="sz__hud">
-      <ol class="sz__steps">
-        <li
-          v-for="(s, i) in stages"
-          :key="s.id"
-          class="sz__step"
-          :class="{ 'is-on': i === idx, 'is-done': i < idx }"
-        >
-          {{ s.title }}
-        </li>
-      </ol>
+      <div class="sz__bar">
+        <ol class="sz__steps">
+          <li
+            v-for="(s, i) in stages"
+            :key="s.id"
+            class="sz__step"
+            :class="{ 'is-on': i === idx, 'is-done': i < idx }"
+          >
+            {{ s.title }}
+          </li>
+        </ol>
+
+        <button v-if="canGoBack" class="sz__back" type="button" :disabled="busy" @click="goBack">
+          <span aria-hidden="true">←</span> 返回上一级
+        </button>
+      </div>
+
       <h2 class="sz__title">{{ current?.title }}</h2>
       <p v-if="current?.caption" class="sz__caption">{{ current.caption }}</p>
     </div>
@@ -152,11 +204,20 @@ async function advance() {
   background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 88%, transparent) 0%, transparent 100%);
 }
 
+.sz__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+
 .sz__steps {
   display: flex;
   gap: var(--sp-2);
   list-style: none;
-  margin: 0 0 var(--sp-3);
+  margin: 0;
   padding: 0;
   flex-wrap: wrap;
 }
@@ -175,6 +236,32 @@ async function advance() {
   color: var(--accent-text);
   border-color: var(--accent-soft);
   background: var(--accent-dim);
+}
+
+/* ---- 返回上一级 ---- */
+.sz__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 28px;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  pointer-events: auto;
+  transition: color var(--t-base) var(--ease), border-color var(--t-base) var(--ease),
+    background var(--t-base) var(--ease);
+}
+.sz__back:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent-soft);
+  background: var(--accent-dim);
+}
+.sz__back:disabled {
+  opacity: 0.5;
+  cursor: progress;
 }
 
 .sz__title {
