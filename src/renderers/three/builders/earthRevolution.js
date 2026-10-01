@@ -23,8 +23,8 @@ import { createStarfield } from '../lib/starfield.js';
 import { getTexture } from '../lib/textures.js';
 
 const ORBIT_R = 4.2;
-const EARTH_R = 0.42;
-const SUN_R = 0.62;
+const EARTH_R = 0.55;
+const SUN_R = 0.66;
 /** 公转速度（弧度/秒）—— 观感取值 */
 const ANGULAR_SPEED = 0.22;
 
@@ -68,7 +68,8 @@ export function buildEarthRevolution(stage, cfg = {}) {
   const texture = getTexture(cfg.earthTexture);
   const earth = new THREE.Mesh(
     new THREE.SphereGeometry(EARTH_R, 56, 36),
-    texture ? texturedMaterial(texture) : matteMaterial(palette.model[0]),
+    // 夜面自发光调高一点：公转这一级地球本来就小，背光那半再全黑就看不见了
+    texture ? texturedMaterial(texture, { nightGlow: 0.22 }) : matteMaterial(palette.model[0]),
   );
   group.add(earth);
 
@@ -87,8 +88,11 @@ export function buildEarthRevolution(stage, cfg = {}) {
     /**
      * 动态锚点：地球在动，「点地球进入下一级」的光点必须跟着动，
      * 不能只在初始化时定位一次。
+     * 位置抬到球体上方 —— 否则标签会正好压在地球上，把球挡住。
      */
-    anchorPositions: () => ({ hotspot: earthPos() }),
+    anchorPositions: () => ({
+      hotspot: [earth.position.x, earth.position.y + EARTH_R + 0.42, earth.position.z],
+    }),
     update(t, dt) {
       angle += dt * ANGULAR_SPEED;
       earth.position.set(...earthPos());
