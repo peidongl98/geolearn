@@ -6,6 +6,9 @@
  *   type          → 大类别（three-3d / canvas-sim / image / chart）
  *   config.scene  → 该类别下的具体场景
  *
+ * 目前 three-3d 只有 space-zoom 一个渲染器 —— 它按 stages[] 逐级展示，
+ * 1.1（银河系 → 太阳系 → 地月系）与 1.2（公转 → 自转）都用它。
+ *
  * ⚠️ 这里刻意用「显式条件分支」而不是动态组件标签：
  *    Astro 的 client:only 需要在构建期静态看得到 import 绑定，
  *    动态标签会报 NoMatchingImport。
@@ -13,20 +16,16 @@
  * 加一种渲染器 = import 一个组件 + 加一行分支，其余页面不用动。
  */
 import SpaceZoom from './three/SpaceZoom.vue';
-import EarthRotation from './three/EarthRotation.vue';
 
 const { model } = Astro.props;
 
 const key = `${model?.type ?? ''}:${model?.config?.scene ?? ''}`;
-const KNOWN = ['three-3d:space-zoom', 'three-3d:earth-rotation'];
+const KNOWN = ['three-3d:space-zoom'];
 const known = KNOWN.includes(key);
 ---
 
 {
   key === 'three-3d:space-zoom' && <SpaceZoom client:only="vue" model={model} />
-}
-{
-  key === 'three-3d:earth-rotation' && <EarthRotation client:only="vue" model={model} />
 }
 {
   !known && (

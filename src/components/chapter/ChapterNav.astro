@@ -8,13 +8,16 @@ const { chapter, section, prev, next } = Astro.props;
 ---
 
 <nav class="nav" aria-label="章节导航">
-  <ol class="nav__crumbs">
-    <li><a href="/">首页</a></li>
-    <li aria-hidden="true">/</li>
-    <li>第 {chapter.id} 章 · {chapter.title}</li>
-    <li aria-hidden="true">/</li>
-    <li class="nav__current" aria-current="page">{section.id} {section.title}</li>
-  </ol>
+  <div class="nav__top">
+    <ol class="nav__crumbs">
+      <li><a href="/">首页</a></li>
+      <li aria-hidden="true">/</li>
+      <li>第 {chapter.id} 章 · {chapter.title}</li>
+      <li aria-hidden="true">/</li>
+      <li class="nav__current" aria-current="page">{section.id} {section.title}</li>
+    </ol>
+    <slot name="actions" />
+  </div>
 
   <div class="nav__pager">
     {
@@ -49,6 +52,15 @@ const { chapter, section, prev, next } = Astro.props;
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
+}
+
+/* 面包屑与「选择章节」入口同一行，窄屏自动换行 */
+.nav__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
 }
 
 .nav__crumbs {

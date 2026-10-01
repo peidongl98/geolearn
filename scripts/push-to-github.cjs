@@ -151,17 +151,34 @@ async function main() {
     const parentCommit = await gh('GET', `/repos/${OWNER}/${REPO}/git/commits/${parentSha}`);
     if (parentCommit && parentCommit.tree && parentCommit.tree.sha) {
       treeBody.base_tree = parentCommit.tree.sha;
+
+      // 3a) 处理**删除**：base_tree 只做合并，本地已删掉的文件会留在远端。
+      //     做法是把「远端有、本地没有」的路径以 sha: null 放进 tree —— 这就是删除。
+      const remoteTree = await gh(
+        'GET',
+        `/repos/${OWNER}/${REPO}/git/trees/${parentCommit.tree.sha}?recursive=1`,
+      );
+      const localSet = new Set(files);
+      const removed = (remoteTree.tree || []).filter(
+        (e) => e.type === 'blob' && !localSet.has(e.path),
+      );
+      for (const r of removed) {
+        tree.push({ path: r.path, mode: '100644', type: 'blob', sha: null });
+      }
+      if (removed.length) {
+        console.log('  远端多余、本次删除的路径：', removed.map((r) => r.path).join(', '));
+      }
     }
   }
   const treeRes = await gh('POST', `/repos/${OWNER}/${REPO}/git/trees`, treeBody);
   console.log('tree sha =', treeRes.sha);
 
-  // 3b) 自检：tree 文件数必须 >= 本次推送文件数，少一个就中止
+  // 3b) 自检：tree 里的文件数必须**等于**本次推送文件数（多一个说明没删干净，少一个说明丢文件）
   const treeCheck = await gh('GET', `/repos/${OWNER}/${REPO}/git/trees/${treeRes.sha}?recursive=1`);
   const treeCount = (treeCheck.tree || []).filter((e) => e.type === 'blob').length;
   console.log('tree 内文件数 =', treeCount, '（期望 =', files.length, '）');
   if (treeCount !== files.length) {
-    throw new Error('tree 文件数与预期不符，已中止（防止远端被清空）');
+    throw new Error('tree 文件数与预期不符，已中止（防止远端被清空或被塞进多余文件）');
   }
 
   // 4) commit

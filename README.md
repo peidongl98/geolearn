@@ -81,9 +81,15 @@ GeoLearn/
 ### 加一种 3D 构件（场景里的一段内容）
 
 1. 抄 `src/renderers/three/builders/spinSphere.js` 起一个新文件，导出
-   `build(stage, cfg) => { group, update?(t, dt, camera) }`。
+   `build(stage, cfg) => { group, update? }`。
+   需要名称标签或「会动的目标」时，还可以返回 `labels` 与 `anchorPositions`
+   —— 完整接口见 `builders/index.js` 顶部的注释。
 2. 在 `src/renderers/three/builders/index.js` 的 `BUILDERS` 里注册一个名字。
 3. 章节 JSON 里的 `body` 写这个名字。
+
+**取景**：一级场景只写 `cameraDir`（视角方向），相机距离由
+`SpaceZoom.frameFor()` 按内容**真实顶点**自动算（`lib/bounds.js`）——
+盘状的太阳系用包围盒会被坑到推远一倍。写了 `cameraPos` 则用固定机位。
 
 ### 加一种渲染器（新的大类别，如 canvas 模拟）
 

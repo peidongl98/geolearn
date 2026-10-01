@@ -11,20 +11,33 @@ import { STORAGE_KEYS } from '../../config/site.js';
 const props = defineProps({
   /** getOutline() 的产物：[{ id, title, subtitle, sections:[{id,title,href}] }] */
   outline: { type: Array, default: () => [] },
+  /**
+   * 入口形态：
+   *   'floating' —— 固定屏幕底部中央（首页用）
+   *   'inline'   —— 内联在文档流里（小节页放在面包屑那一行右侧用）
+   */
+  variant: { type: String, default: 'floating' },
+  /** 当前所在小节的 href；给了就在抽屉里标「当前」 */
+  current: { type: String, default: '' },
 });
 
 const open = ref(false);
 const panel = ref(null);
 const trigger = ref(null);
 
-const lastHref = ref('');
+/** 章节页传 current，首页退回到「上次点过的那节」 */
+const markedHref = ref(props.current || '');
 onMounted(() => {
+  if (markedHref.value) return;
   try {
-    lastHref.value = localStorage.getItem(STORAGE_KEYS.lastSection) ?? '';
+    markedHref.value = localStorage.getItem(STORAGE_KEYS.lastSection) ?? '';
   } catch {
     /* 隐私模式下 localStorage 不可用，忽略 */
   }
 });
+
+const isInline = computed(() => props.variant === 'inline');
+const markLabel = computed(() => (props.current ? '当前' : '上次'));
 
 const flatCount = computed(() => props.outline.reduce((n, c) => n + c.sections.length, 0));
 
@@ -77,7 +90,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="drawer-root">
     <!-- 底部中央入口 -->
-    <button ref="trigger" class="drawer-trigger" type="button" @click="toggle">
+    <button ref="trigger" class="drawer-trigger" :class="{ 'drawer-trigger--inline': isInline }" type="button" @click="toggle">
       <span class="drawer-trigger__icon" aria-hidden="true">
         <i></i><i></i><i></i>
       </span>
@@ -95,7 +108,6 @@ onBeforeUnmount(() => {
             <span class="drawer__grip" aria-hidden="true"></span>
             <div class="drawer__titles">
               <h2 class="drawer__title">选择章节</h2>
-              <p class="drawer__sub">本批已开放第一章</p>
             </div>
             <button class="drawer__close" type="button" aria-label="关闭" @click="hide({ toTrigger: true })">
               ×
@@ -115,12 +127,12 @@ onBeforeUnmount(() => {
                   <button
                     class="lesson"
                     type="button"
-                    :class="{ 'is-last': section.href === lastHref }"
+                    :class="{ 'is-last': section.href === markedHref }"
                     @click="choose(section)"
                   >
                     <span class="lesson__id num">{{ section.id }}</span>
                     <span class="lesson__title">{{ section.title }}</span>
-                    <span v-if="section.href === lastHref" class="lesson__flag">上次</span>
+                    <span v-if="section.href === markedHref" class="lesson__flag">{{ markLabel }}</span>
                     <span class="lesson__arrow" aria-hidden="true">→</span>
                   </button>
                 </li>
@@ -159,6 +171,19 @@ onBeforeUnmount(() => {
 .drawer-trigger:hover {
   background: var(--surface-3);
   border-color: var(--accent-soft);
+}
+
+/* 内联形态：跟在面包屑那一行右边，不浮动、不投影 */
+.drawer-trigger--inline {
+  position: static;
+  transform: none;
+  height: 30px;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-xs);
+  box-shadow: none;
+}
+.drawer-trigger--inline .drawer-trigger__icon i {
+  width: 11px;
 }
 .drawer-trigger__icon {
   display: grid;
@@ -229,11 +254,6 @@ onBeforeUnmount(() => {
 }
 .drawer__title {
   font-size: var(--fs-md);
-}
-.drawer__sub {
-  margin: var(--sp-1) 0 0;
-  font-size: var(--fs-xs);
-  color: var(--text-faint);
 }
 .drawer__close {
   width: 30px;

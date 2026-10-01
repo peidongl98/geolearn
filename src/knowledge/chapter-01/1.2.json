@@ -2,25 +2,52 @@
   "id": "1.2",
   "type": "three-3d",
   "config": {
-    "scene": "earth-rotation",
+    "scene": "space-zoom",
 
-    "_note": "本批只做「自转」。公转模型后续批次按同一接口追加：config.scene 换成 earth-revolution，并在渲染器注册表（src/renderers/ModelHost.astro）里加一项即可，无需改动本文件以外的任何已有代码。",
+    "_note": "两级：公转 → 自转。第一级的地球在动，光点与标签用 builder 的 anchorPositions 每帧跟随 —— 不要改成只在初始化时定位一次。",
 
     "camera": {
-      "fov": 42,
+      "fov": 45,
       "near": 0.1,
-      "far": 200
+      "far": 300
     },
 
-    "body": "spin-sphere",
-    "texture": "earth-day",
-    "spinDegPerSec": 8,
-    "showAxis": true,
+    "transition": {
+      "durationMs": 1200,
+      "easing": "easeInOutCubic"
+    },
 
-    "cameraPos": [0, 1.8, 6.2],
-    "cameraTarget": [0, 0, 0],
+    "stages": [
+      {
+        "id": "revolution",
+        "title": "地球的公转",
+        "caption": "地球沿轨道绕太阳运行，方向自西向东。",
+        "body": "earth-revolution",
+        "earthTexture": "earth-day",
+        "startAngle": 0,
 
-    "caption": "地球绕地轴自西向东自转。球面为真实海陆影像；地轴倾角、自转周期、线速度等数值本批尚未接入。"
+        "cameraDir": [0, 0.45, 0.89],
+
+        "hotspot": {
+          "label": "地球",
+          "position": [4.2, 0, 0],
+          "clickable": true,
+          "hint": "点击看自转"
+        }
+      },
+      {
+        "id": "rotation",
+        "title": "地球的自转",
+        "caption": "地球绕地轴自西向东自转。",
+        "body": "spin-sphere",
+        "texture": "earth-day",
+        "spinDegPerSec": 8,
+        "showEquator": true,
+        "cameraPos": [0, 1.8, 6.2],
+        "cameraTarget": [0, 0, 0],
+        "hotspot": null
+      }
+    ]
   },
-  "dataSource": "地球贴图：NASA Blue Marble（Land_ocean_ice_2048，公有领域，https://commons.wikimedia.org/wiki/File:Land_ocean_ice_2048.jpg）。自转方向与地轴位置为示意；转速为观感取值，非真实值。"
+  "dataSource": "公转方向（自西向东）、日地平均距离 1 AU（1.496×10⁸ km）、公转周期 365.256 天取自《地球概论（第四版）》。地球贴图为 NASA Blue Marble（公有领域）。⚠️ 轨道半径、天体大小与公转转速均为观感取值，与真实比例无数量关系；轨道按正圆处理（真实偏心率 0.017）。地轴倾角与黄赤交角尚未接入，本模型不能用于讲四季成因。"
 }

@@ -20,7 +20,7 @@ export function createStarfield(stage, { count = 420, radius = 32, size = 0.09 }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-  return new THREE.Points(
+  const points = new THREE.Points(
     geo,
     new THREE.PointsMaterial({
       color: new THREE.Color(stage.palette.textDim),
@@ -31,4 +31,7 @@ export function createStarfield(stage, { count = 420, radius = 32, size = 0.09 }
       depthWrite: false,
     }),
   );
+  // 背景星点不参与自动取景 —— 否则相机为了装下它会被推到很远
+  points.userData.excludeFromBounds = true;
+  return points;
 }
