@@ -3,13 +3,15 @@
  *
  * 中心恒星 + 若干行星 + 轨道圈（示意）。地球的位置直接取 cfg.hotspot.position，
  * 保证「光点标记」与「地球本体」永远重合 —— 改 JSON 就够，不用动代码。
+ * 地球若给了 cfg.earthTexture，就用真实贴图的光滑球体。
  *
  * ⚠️ 占位模型：行星数量、间距、大小均为示意，不对应真实天文数值。
  */
 import * as THREE from 'three';
-import { matteMaterial } from '../lib/matte.js';
+import { matteMaterial, texturedMaterial } from '../lib/matte.js';
 import { createHotspotMarker } from '../lib/hotspot.js';
 import { createStarfield } from '../lib/starfield.js';
+import { getTexture } from '../lib/textures.js';
 
 /** 其余行星的相对位置（地球由配置给出） */
 const PLANET_SLOTS = [
@@ -55,9 +57,14 @@ export function buildSolarSystem(stage, cfg) {
   // 地球所在轨道的轨道圈
   group.add(orbitRing(earthRadius, palette.accent));
 
+  const earthTex = getTexture(cfg.earthTexture);
   const earth = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.34, 2),
-    matteMaterial(palette.model[0], { emissive: palette.accent, emissiveIntensity: 0.22 }),
+    earthTex
+      ? new THREE.SphereGeometry(0.34, 48, 32)
+      : new THREE.IcosahedronGeometry(0.34, 2),
+    earthTex
+      ? texturedMaterial(earthTex)
+      : matteMaterial(palette.model[0], { emissive: palette.accent, emissiveIntensity: 0.22 }),
   );
   earth.position.set(...earthPos);
   group.add(earth);

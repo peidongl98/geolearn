@@ -7,9 +7,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import AdminConsole from '../../components/admin/AdminConsole.vue';
+import { SITE } from '../../config/site.js';
 ---
 
-<BaseLayout title="管理台 · GeoLearn">
+<BaseLayout title={`管理台 · ${SITE.nameCn}`}>
   <SiteHeader />
 
   <main>

@@ -1,0 +1,6 @@
+# Cloudflare Pages 响应头
+# 贴图是稳定路径（不带内容哈希），给长缓存；换图请同时改文件名（见 src/renderers/three/lib/textures.js），
+# 否则用户会一直看到旧图。
+
+/textures/*
+  Cache-Control: public, max-age=604800

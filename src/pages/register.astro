@@ -1,8 +1,9 @@
 ---
 import AuthShell from '../layouts/AuthShell.astro';
 import AuthForm from '../components/auth/AuthForm.vue';
+import { SITE } from '../config/site.js';
 ---
 
-<AuthShell title="注册 · GeoLearn">
+<AuthShell title={`注册 · ${SITE.nameCn}`}>
   <AuthForm client:load mode="register" next="/" />
 </AuthShell>

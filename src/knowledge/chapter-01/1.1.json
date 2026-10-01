@@ -37,6 +37,7 @@
         "title": "太阳系",
         "caption": "太阳位于中心，行星在近乎同一平面上绕转。请找到地球。",
         "body": "solar-system",
+        "earthTexture": "earth-day",
         "cameraPos": [0, 4.5, 15],
         "cameraTarget": [0, 0, 0],
         "hotspot": {
@@ -49,13 +50,14 @@
       {
         "id": "earth-moon",
         "title": "地月系",
-        "caption": "月球绕地球公转，与地球共同构成地月系。探索到此为止。",
+        "caption": "月球绕地球公转，与地球共同构成地月系。地球表面是真实海陆影像。探索到此为止。",
         "body": "earth-moon",
+        "earthTexture": "earth-day",
         "cameraPos": [0, 2.6, 9.5],
         "cameraTarget": [0, 0, 0],
         "hotspot": null
       }
     ]
   },
-  "dataSource": "占位几何体 · 非科学模型（本批为骨架版本，未接入任何数值）"
+  "dataSource": "地球贴图：NASA Blue Marble（Land_ocean_ice_2048，公有领域）。天体的大小、间距、轨道均为示意，未接入真实数值。"
 }

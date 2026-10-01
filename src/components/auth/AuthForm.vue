@@ -7,6 +7,7 @@ import { computed, onMounted, ref } from 'vue';
 import { login, register, fetchUser } from '../../lib/session.js';
 import { ApiError } from '../../lib/http.js';
 import { checkUsername, checkPassword, checkInviteCode, firstError } from '../../lib/validate.js';
+import { SITE } from '../../config/site.js';
 
 const props = defineProps({
   mode: { type: String, default: 'login' },
@@ -63,7 +64,7 @@ async function submit() {
     <header class="auth__head">
       <h1 class="auth__title">{{ isRegister ? '注册' : '登录' }}</h1>
       <p class="auth__sub">
-        {{ isRegister ? '注册需要邀请码' : 'GeoLearn · 自然地理学建模学习' }}
+        {{ isRegister ? '注册需要邀请码' : SITE.title }}
       </p>
     </header>
 

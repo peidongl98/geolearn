@@ -1,6 +1,6 @@
-# GeoLearn · 自然地理学建模学习工具
+# GeoLearn · 地理模型教具
 
-把自然地理知识点做成可交互的 3D 模型，辅助学习。**不做区域地理，只做自然地理。**
+把自然地理知识点做成可交互的 3D 模型教具，用于教学与自学。**不做区域地理，只做自然地理。**
 
 - 技术栈：Astro（纯静态输出）+ Vue 岛 + Three.js + Cloudflare Pages / D1 / Functions
 - 视觉：科技简约 + 低多边形 3D，深色底（`#0a0e14`）+ 低饱和强调色（暗青绿 `#5ba88c`）
@@ -155,4 +155,22 @@ node scripts/create-admin.mjs <用户名> <密码> --remote # 线上库
 - 每个模型 JSON **必须**有 `dataSource` 字段；没有就写
   `"占位几何体 · 非科学模型（本批为骨架版本，未接入任何数值）"`。
 - 数值参数必须能追到出处（教材页码 / 权威链接），并在 `dataSource` 里写明。
+  教材依据与贴图出处是**两条线**，都要写。教材引用约定见 `docs/textbook-choice.md`
+  （已定稿：引用到章节层级为止，不写页码）。
 - 拿不准就停下来问，**不猜**。有争议的内容标「存在争议」，不放进模型。
+
+---
+
+## 六、3D 贴图与素材来源
+
+贴图统一在 `src/renderers/three/lib/textures.js` 注册，**来源与许可写在文件注释里**。
+
+| 键 | 文件 | 来源 | 许可 |
+|---|---|---|---|
+| `earth-day` | `public/textures/earth-day.jpg`（2048×1024 等距圆柱） | NASA Blue Marble（Land_ocean_ice_2048） | 公有领域（NASA 影像不受版权保护） |
+
+- 贴图路径**不带内容哈希**，`public/_headers` 给 `/textures/*` 打了 7 天长缓存
+  → **换图必须换文件名**，否则用户会一直看到旧图。
+- 加贴图 = 放文件到 `public/textures/` + 在 `textures.js` 的 `REGISTRY` 加一行；
+  构件里用 `getTexture('名字')` 取（`TextureLoader` 立即返回 Texture 对象，
+  图片加载完自动生效，不用写 await）。

@@ -5,12 +5,13 @@ import HomeStage from '../renderers/three/HomeStage.vue';
 import ChapterDrawer from '../components/home/ChapterDrawer.vue';
 import StageLoading from '../components/home/StageLoading.vue';
 import { getOutline } from '../lib/knowledge.js';
+import { SITE } from '../config/site.js';
 
 const outline = getOutline();
 const denied = Astro.url.searchParams.get('denied') === 'admin';
 ---
 
-<BaseLayout title="GeoLearn · 自然地理学建模学习">
+<BaseLayout title={SITE.title}>
   <div class="home">
     <SiteHeader />
 

@@ -1,14 +1,18 @@
 /**
  * 构件：自转球体（spin-sphere）
  *
- * 一个球 + 地轴 + 赤道圈 + 随球转动的一条经线和一个赤道标记点，
- * 让「自转」这件事一眼可见。
+ * 两种外观：
+ *   - cfg.texture 给了名字 → 真实贴图的**光滑球体**（地球：海陆冰一眼可见）
+ *   - 没给 → 低多边形占位球 + 随转经线（骨架期原本的样子）
  *
- * ⚠️ 占位模型：**地轴倾角未接入**，当前球体竖直放置、无 23.5° 之类数值。
+ * 两种外观都保留地轴与赤道圈，它们是有教学意义的参照物。
+ *
+ * ⚠️ 仍然是占位模型：**地轴倾角未接入**，球体竖直放置、无 23.5° 之类数值。
  *    接入真实倾角时必须同时给出数据来源（见章节 JSON 的 dataSource 字段）。
  */
 import * as THREE from 'three';
-import { matteMaterial } from '../lib/matte.js';
+import { matteMaterial, texturedMaterial } from '../lib/matte.js';
+import { getTexture } from '../lib/textures.js';
 
 const RADIUS = 1.6;
 
@@ -30,26 +34,40 @@ export function buildSpinSphere(stage, cfg) {
   const { palette } = stage;
 
   const spinRadPerSec = ((cfg.spinDegPerSec ?? 8) * Math.PI) / 180;
+  const texture = getTexture(cfg.texture);
 
-  /* ---- 会转的部分：球 + 一条经线 + 赤道标记点 ---- */
+  /* ---- 会转的部分 ---- */
   const rotor = new THREE.Group();
 
-  const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(RADIUS, 32, 22),
-    matteMaterial(palette.model[0]),
-  );
-  rotor.add(sphere);
+  if (texture) {
+    // 有贴图：光滑高分段球体。赤道、极冠已经长在图上了，不必再画经线。
+    rotor.add(
+      new THREE.Mesh(new THREE.SphereGeometry(RADIUS, 72, 48), texturedMaterial(texture)),
+    );
 
-  const meridian = thinRing(RADIUS * 1.002, palette.accentSoft, 0.5);
-  meridian.rotation.y = Math.PI / 2;
-  rotor.add(meridian);
+    // 赤道上的小标记点：用来一眼看出自转方向
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.075, 12, 12),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(palette.accent) }),
+    );
+    dot.position.set(RADIUS * 1.03, 0, 0);
+    rotor.add(dot);
+  } else {
+    rotor.add(
+      new THREE.Mesh(new THREE.SphereGeometry(RADIUS, 32, 22), matteMaterial(palette.model[0])),
+    );
 
-  const dot = new THREE.Mesh(
-    new THREE.SphereGeometry(0.1, 14, 14),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(palette.accent) }),
-  );
-  dot.position.set(RADIUS * 1.02, 0, 0);
-  rotor.add(dot);
+    const meridian = thinRing(RADIUS * 1.002, palette.accentSoft, 0.5);
+    meridian.rotation.y = Math.PI / 2;
+    rotor.add(meridian);
+
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 14, 14),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(palette.accent) }),
+    );
+    dot.position.set(RADIUS * 1.02, 0, 0);
+    rotor.add(dot);
+  }
 
   group.add(rotor);
 

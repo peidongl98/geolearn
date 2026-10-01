@@ -25,3 +25,23 @@ export function glowMaterial(color, intensity = 1) {
     opacity: Math.min(1, intensity),
   });
 }
+
+/**
+ * 带贴图的球体材质 —— 用于「要看起来像真的」的天体（目前只有地球）。
+ *
+ * 与低多边形占位物的区别：
+ *   - flatShading = false（有贴图再分面会把海陆切碎）
+ *   - 把同一张贴图当作 emissiveMap 低强度自发光，
+ *     这样背光面的海陆轮廓还不至于全黑，看得清 —— 教具的可用性优先于「真实夜半球」。
+ */
+export function texturedMaterial(texture, { roughness = 0.85, nightGlow = 0.14 } = {}) {
+  return new THREE.MeshStandardMaterial({
+    map: texture,
+    emissiveMap: texture,
+    emissive: new THREE.Color(0xffffff),
+    emissiveIntensity: nightGlow,
+    flatShading: false,
+    roughness,
+    metalness: 0,
+  });
+}

@@ -16,7 +16,7 @@ export function notFoundResponse(pathname = '') {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<title>页面不存在 · GeoLearn</title>
+<title>页面不存在 · 地理模型教具</title>
 <style>
   :root { color-scheme: dark; }
   body {

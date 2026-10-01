@@ -4,7 +4,7 @@
   "config": {
     "scene": "earth-rotation",
 
-    "_note": "本批只做「自转」占位。公转模型后续批次按同一接口追加：config.scene 换成 earth-revolution，并在渲染器注册表里加一项即可，无需改动本文件以外的任何已有代码。",
+    "_note": "本批只做「自转」。公转模型后续批次按同一接口追加：config.scene 换成 earth-revolution，并在渲染器注册表（src/renderers/ModelHost.astro）里加一项即可，无需改动本文件以外的任何已有代码。",
 
     "camera": {
       "fov": 42,
@@ -13,13 +13,14 @@
     },
 
     "body": "spin-sphere",
+    "texture": "earth-day",
     "spinDegPerSec": 8,
     "showAxis": true,
 
     "cameraPos": [0, 1.8, 6.2],
     "cameraTarget": [0, 0, 0],
 
-    "caption": "地球绕地轴自西向东自转。本批为占位球体，地轴倾角、线速度等数值尚未接入。"
+    "caption": "地球绕地轴自西向东自转。球面为真实海陆影像；地轴倾角、自转周期、线速度等数值本批尚未接入。"
   },
-  "dataSource": "占位几何体 · 非科学模型（本批为骨架版本，未接入任何数值）"
+  "dataSource": "地球贴图：NASA Blue Marble（Land_ocean_ice_2048，公有领域，https://commons.wikimedia.org/wiki/File:Land_ocean_ice_2048.jpg）。自转方向与地轴位置为示意；转速为观感取值，非真实值。"
 }
