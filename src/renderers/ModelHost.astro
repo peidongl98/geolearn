@@ -1,0 +1,62 @@
+---
+/**
+ * 模型宿主 —— 把章节 JSON 里的 { type, config } 映射到具体渲染器。
+ *
+ * 这是「渲染器接口」唯一的落地点：
+ *   type          → 大类别（three-3d / canvas-sim / image / chart）
+ *   config.scene  → 该类别下的具体场景
+ *
+ * ⚠️ 这里刻意用「显式条件分支」而不是动态组件标签：
+ *    Astro 的 client:only 需要在构建期静态看得到 import 绑定，
+ *    动态标签会报 NoMatchingImport。
+ *
+ * 加一种渲染器 = import 一个组件 + 加一行分支，其余页面不用动。
+ */
+import SpaceZoom from './three/SpaceZoom.vue';
+import EarthRotation from './three/EarthRotation.vue';
+
+const { model } = Astro.props;
+
+const key = `${model?.type ?? ''}:${model?.config?.scene ?? ''}`;
+const KNOWN = ['three-3d:space-zoom', 'three-3d:earth-rotation'];
+const known = KNOWN.includes(key);
+---
+
+{
+  key === 'three-3d:space-zoom' && <SpaceZoom client:only="vue" model={model} />
+}
+{
+  key === 'three-3d:earth-rotation' && <EarthRotation client:only="vue" model={model} />
+}
+{
+  !known && (
+    <div class="missing">
+      <p class="missing__title">没有找到渲染器</p>
+      <p class="missing__body">
+        模型声明为 <code>{key || '（空）'}</code>，但 src/renderers/ModelHost.astro 里没有注册它。
+      </p>
+    </div>
+  )
+}
+
+<style>
+.missing {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: var(--sp-2);
+  text-align: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.missing__title {
+  margin: 0;
+  color: var(--warn);
+}
+.missing__body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-faint);
+}
+</style>

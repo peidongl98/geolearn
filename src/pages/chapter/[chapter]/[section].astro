@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import ChapterNav from '../../../components/chapter/ChapterNav.astro';
+import ModelHost from '../../../renderers/ModelHost.astro';
+import { getAllSections, getKnowledgeTree } from '../../../lib/knowledge.js';
+
+/**
+ * 一个动态路由生成全部章节页 ——
+ * 加一节只需要改章节目录里的 index.md + 放一个 JSON，这里一个字都不用动。
+ */
+export function getStaticPaths() {
+  return getAllSections().map((section) => ({
+    params: { chapter: section.chapterSlug, section: section.slug },
+    props: { section },
+  }));
+}
+
+const { section } = Astro.props;
+const tree = getKnowledgeTree();
+const chapter = tree.chapters.find((c) => c.slug === section.chapterSlug);
+const index = chapter.sections.findIndex((s) => s.slug === section.slug);
+const prev = chapter.sections[index - 1] ?? null;
+const nextSection = chapter.sections[index + 1] ?? null;
+---
+
+<BaseLayout title={`${section.id} ${section.title} · ${chapter.title}`}>
+  <SiteHeader />
+
+  <main class="page">
+    <ChapterNav chapter={chapter} section={section} prev={prev} next={nextSection} />
+
+    <h1 class="page__title">
+      <span class="page__id num">{section.id}</span>
+      {section.title}
+    </h1>
+
+    <div class="page__stage">
+      <ModelHost model={section.model} />
+    </div>
+
+    <p class="page__note">
+      本批为骨架版本：模型为占位几何体，页面结构与渲染器接口已定型，具体内容与数值后续接入。
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-5) var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.page__title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  font-size: var(--fs-xl);
+}
+
+.page__id {
+  font-size: var(--fs-md);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+/* 模型区容器：高度用 svh，保证移动端地址栏收起时不被裁掉 */
+.page__stage {
+  height: clamp(340px, 60svh, 680px);
+}
+
+.page__note {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: var(--sp-4) var(--sp-4) var(--sp-7);
+  }
+  .page__title {
+    font-size: var(--fs-lg);
+  }
+}
+</style>

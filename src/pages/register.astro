@@ -1,0 +1,8 @@
+---
+import AuthShell from '../layouts/AuthShell.astro';
+import AuthForm from '../components/auth/AuthForm.vue';
+---
+
+<AuthShell title="注册 · GeoLearn">
+  <AuthForm client:load mode="register" next="/" />
+</AuthShell>

@@ -1,0 +1,25 @@
+{
+  "id": "1.2",
+  "type": "three-3d",
+  "config": {
+    "scene": "earth-rotation",
+
+    "_note": "本批只做「自转」占位。公转模型后续批次按同一接口追加：config.scene 换成 earth-revolution，并在渲染器注册表里加一项即可，无需改动本文件以外的任何已有代码。",
+
+    "camera": {
+      "fov": 42,
+      "near": 0.1,
+      "far": 200
+    },
+
+    "body": "spin-sphere",
+    "spinDegPerSec": 8,
+    "showAxis": true,
+
+    "cameraPos": [0, 1.8, 6.2],
+    "cameraTarget": [0, 0, 0],
+
+    "caption": "地球绕地轴自西向东自转。本批为占位球体，地轴倾角、线速度等数值尚未接入。"
+  },
+  "dataSource": "占位几何体 · 非科学模型（本批为骨架版本，未接入任何数值）"
+}

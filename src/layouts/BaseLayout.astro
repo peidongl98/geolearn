@@ -1,0 +1,30 @@
+---
+/**
+ * 全站基础布局 —— 只管 <html>/<head>/<body> 骨架与全局样式。
+ * 具体页面长什么样由各页面自己决定，不要往这里加业务结构。
+ */
+import '../styles/global.css';
+import '../styles/ui.css';
+import { SITE } from '../config/site.js';
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.lang} data-page={Astro.url.pathname}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0e14" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,59 @@
+---
+/**
+ * 页面顶栏 —— 品牌 + 面包屑槽 + 用户区。
+ * 各页只需 <SiteHeader>…面包屑…</SiteHeader>。
+ */
+import UserMenu from './UserMenu.vue';
+import { SITE } from '../../config/site.js';
+
+const { home = true } = Astro.props;
+---
+
+<header class="top">
+  <div class="top__left">
+    <a class="top__brand" href="/">
+      <img src="/favicon.svg" alt="" width="24" height="24" />
+      <span>{SITE.name}</span>
+    </a>
+    <slot />
+  </div>
+
+  <UserMenu client:load />
+</header>
+
+<style>
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.top__left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+.top__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.top__brand:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .top {
+    padding: var(--sp-3) var(--sp-4);
+  }
+}
+</style>

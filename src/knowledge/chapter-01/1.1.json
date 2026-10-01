@@ -1,0 +1,61 @@
+{
+  "id": "1.1",
+  "type": "three-3d",
+  "config": {
+    "scene": "space-zoom",
+
+    "_note": "探索式导航：银河系 → 太阳系 → 地月系，点击发光点推进，镜头平滑过渡后停在原地不再深入。",
+
+    "camera": {
+      "fov": 45,
+      "near": 0.1,
+      "far": 400
+    },
+
+    "transition": {
+      "durationMs": 1400,
+      "easing": "easeInOutCubic"
+    },
+
+    "stages": [
+      {
+        "id": "galaxy",
+        "title": "银河系",
+        "caption": "银河系是一个盘状星系。图中那个偏亮的光点，标示太阳系所在的位置。",
+        "body": "galaxy-disc",
+        "cameraPos": [0, 6.5, 17],
+        "cameraTarget": [0, 0, 0],
+        "hotspot": {
+          "label": "太阳系",
+          "position": [4.4, 0.9, 1.6],
+          "clickable": true,
+          "hint": "点击进入"
+        }
+      },
+      {
+        "id": "solar",
+        "title": "太阳系",
+        "caption": "太阳位于中心，行星在近乎同一平面上绕转。请找到地球。",
+        "body": "solar-system",
+        "cameraPos": [0, 4.5, 15],
+        "cameraTarget": [0, 0, 0],
+        "hotspot": {
+          "label": "地球",
+          "position": [3.05, 0, 0.55],
+          "clickable": true,
+          "hint": "点击进入"
+        }
+      },
+      {
+        "id": "earth-moon",
+        "title": "地月系",
+        "caption": "月球绕地球公转，与地球共同构成地月系。探索到此为止。",
+        "body": "earth-moon",
+        "cameraPos": [0, 2.6, 9.5],
+        "cameraTarget": [0, 0, 0],
+        "hotspot": null
+      }
+    ]
+  },
+  "dataSource": "占位几何体 · 非科学模型（本批为骨架版本，未接入任何数值）"
+}

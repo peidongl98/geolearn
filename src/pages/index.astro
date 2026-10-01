@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import HomeStage from '../renderers/three/HomeStage.vue';
+import ChapterDrawer from '../components/home/ChapterDrawer.vue';
+import StageLoading from '../components/home/StageLoading.vue';
+import { getOutline } from '../lib/knowledge.js';
+
+const outline = getOutline();
+const denied = Astro.url.searchParams.get('denied') === 'admin';
+---
+
+<BaseLayout title="GeoLearn · 自然地理学建模学习">
+  <div class="home">
+    <SiteHeader />
+
+    <main class="home__stage">
+      <HomeStage client:only="vue" />
+      {denied && <p class="home__notice">管理台只对管理员开放。</p>}
+    </main>
+
+    <ChapterDrawer client:load outline={outline} />
+    <StageLoading client:load />
+  </div>
+</BaseLayout>
+
+<style>
+.home {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* 3D 占据顶栏以下的全部空间，物体在画布正中 */
+.home__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.home__notice {
+  position: absolute;
+  left: 50%;
+  top: var(--sp-5);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--warn);
+  border: 1px solid #3a3326;
+  background: #1c1913;
+  border-radius: var(--r-pill);
+}
+</style>

@@ -1,0 +1,67 @@
+---
+/**
+ * 登录/注册页外壳 —— 居中卡片 + 品牌标。
+ * 只负责版式，表单本身由 AuthForm.vue 提供。
+ */
+import BaseLayout from './BaseLayout.astro';
+import { SITE } from '../config/site.js';
+
+const { title } = Astro.props;
+---
+
+<BaseLayout title={title ?? `登录 · ${SITE.name}`}>
+  <main class="shell">
+    <div class="shell__brand">
+      <img src="/favicon.svg" alt="" width="34" height="34" />
+      <div>
+        <p class="shell__name">{SITE.name}</p>
+        <p class="shell__cn">{SITE.nameCn}</p>
+      </div>
+    </div>
+
+    <div class="shell__box">
+      <slot />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+.shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  padding: var(--sp-7) var(--sp-4);
+  background: radial-gradient(90% 60% at 50% 0%, var(--surface) 0%, var(--bg) 62%);
+}
+
+.shell__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.shell__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+  color: var(--text);
+}
+.shell__cn {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.shell__box {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+</style>

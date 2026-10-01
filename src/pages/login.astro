@@ -1,0 +1,12 @@
+---
+import AuthShell from '../layouts/AuthShell.astro';
+import AuthForm from '../components/auth/AuthForm.vue';
+
+const next = Astro.url.searchParams.get('next') ?? '/';
+// 只接受站内相对路径，避免被构造成外部跳转
+const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/';
+---
+
+<AuthShell title="登录 · GeoLearn">
+  <AuthForm client:load mode="login" next={safeNext} />
+</AuthShell>

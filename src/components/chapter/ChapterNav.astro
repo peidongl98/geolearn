@@ -1,0 +1,111 @@
+---
+/**
+ * 章节层级导航（纯静态，无 JS）：
+ *   面包屑：GeoLearn / 第 1 章 宇宙中的地球 / 1.1 地球在宇宙中的位置
+ *   上一节 / 下一节
+ */
+const { chapter, section, prev, next } = Astro.props;
+---
+
+<nav class="nav" aria-label="章节导航">
+  <ol class="nav__crumbs">
+    <li><a href="/">首页</a></li>
+    <li aria-hidden="true">/</li>
+    <li>第 {chapter.id} 章 · {chapter.title}</li>
+    <li aria-hidden="true">/</li>
+    <li class="nav__current" aria-current="page">{section.id} {section.title}</li>
+  </ol>
+
+  <div class="nav__pager">
+    {
+      prev ? (
+        <span class="pager">
+          <span class="pager__dir">上一节</span>
+          <a class="pager__link" href={prev.href}>
+            {prev.id} {prev.title}
+          </a>
+        </span>
+      ) : (
+        <span class="pager pager--void" />
+      )
+    }
+    {
+      next ? (
+        <span class="pager pager--right">
+          <span class="pager__dir">下一节</span>
+          <a class="pager__link" href={next.href}>
+            {next.id} {next.title}
+          </a>
+        </span>
+      ) : (
+        <span class="pager pager--void" />
+      )
+    }
+  </div>
+</nav>
+
+<style>
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.nav__crumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+.nav__crumbs a {
+  color: var(--text-dim);
+}
+.nav__current {
+  color: var(--text-dim);
+}
+
+.nav__pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+.pager {
+  min-width: 0;
+}
+.pager--right {
+  text-align: right;
+}
+.pager--void {
+  visibility: hidden;
+}
+.pager__dir {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  margin-bottom: var(--sp-1);
+}
+.pager__link {
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+.pager__link:hover {
+  color: var(--accent-text);
+}
+
+@media (max-width: 640px) {
+  .nav__pager {
+    grid-template-columns: 1fr;
+  }
+  .pager--right {
+    text-align: left;
+  }
+  .pager--void {
+    display: none;
+  }
+}
+</style>

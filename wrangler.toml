@@ -1,0 +1,19 @@
+# Cloudflare Pages 项目配置
+# 部署：npx wrangler pages deploy   （读取下面的 pages_build_output_dir）
+#
+# 注意：
+#   1. 不要在这里写 account_id —— Pages 会报 "does not support account_id"，用环境变量。
+#   2. functions/ 目录由 Pages 从**项目根**自动识别，不需要放进 dist/，
+#      也不需要在这里声明。
+#   3. D1 绑定在阶段 2 创建数据库后补上（见 [[d1_databases]]）。
+
+name = "geolearn"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "dist"
+
+# D1 绑定（阶段 2 创建）
+# binding 名必须与 functions/ 里的 env.DB 一致
+[[d1_databases]]
+binding = "DB"
+database_name = "geolearn-db"
+database_id = "7a1d4527-bc07-4b48-bb9a-39076fca8023"

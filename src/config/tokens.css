@@ -1,0 +1,85 @@
+/* ============================================================================
+ * 设计令牌 —— 全站唯一的颜色 / 尺寸 / 动效来源
+ * ----------------------------------------------------------------------------
+ * 规则：任何组件都不得写死颜色值。要调色，只改这里。
+ * 风格定位：科技简约 + 低多边形 3D（深色底 + 低饱和强调色 + 高反差文字）
+ * ========================================================================== */
+
+:root {
+  /* ---- 背景层（由深到浅，亮度 10% → 15%）---- */
+  --bg: #0a0e14;          /* 页面底：近黑带冷调 */
+  --surface: #12161c;     /* 卡片：比页面略亮一点 */
+  --surface-2: #161b23;   /* 悬浮/次级卡片 */
+  --surface-3: #1b2129;   /* 输入框、表头等最亮层 */
+
+  /* ---- 文字（亮度 85% → 92%，不用纯白）---- */
+  --text: #e8e8e8;
+  --text-dim: #8a8f98;
+  --text-faint: #5c636d;
+
+  /* ---- 边框 / 分割线：极淡---- */
+  --border: #1f242c;
+  --border-strong: #2a3039;
+
+  /* ---- 强调色：暗青绿（本批最终选定，全站统一）---- */
+  --accent: #5ba88c;
+  --accent-soft: #3d6f5d;     /* 边框/描边用 */
+  --accent-dim: #2b4c40;      /* 极淡底 */
+  --accent-text: #7fc4a8;     /* 深底上的强调文字 */
+
+  /* ---- 语义色（低饱和，与强调色同族亮度）---- */
+  --danger: #b5695f;
+  --warn: #b8a06a;
+
+  /* ---- 3D 模型配色：与背景明度差 ≥ 25% ---- */
+  --model-1: #6f8fa8;
+  --model-2: #7f9e88;
+  --model-3: #9a8fa8;
+
+  /* ---- 圆角 ---- */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* ---- 间距（4 的倍数）---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* ---- 字体 ---- */
+  --font-display: 'Inter', 'Manrope', 'HarmonyOS Sans SC', 'PingFang SC',
+    'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono',
+    Consolas, monospace;
+
+  /* ---- 字号 ---- */
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 17px;
+  --fs-lg: 22px;
+  --fs-xl: 30px;
+  --fs-2xl: 40px;
+
+  /* ---- 动效：克制、0.3–0.5s ---- */
+  --t-fast: 0.2s;
+  --t-base: 0.3s;
+  --t-slow: 0.45s;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- 层级 ---- */
+  --z-stage: 1;
+  --z-hud: 10;
+  --z-drawer: 40;
+  --z-modal: 60;
+  --z-loader: 80;
+}

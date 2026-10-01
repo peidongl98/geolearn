@@ -1,0 +1,24 @@
+---
+/**
+ * /admin —— 管理员控制台。
+ * 访问权限由 functions/_middleware.js 在边缘拦截（非管理员直接 302 回首页）；
+ * 页面里的 ensureAdmin() 只是浏览器前进/后退缓存下的兜底。
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import AdminConsole from '../../components/admin/AdminConsole.vue';
+---
+
+<BaseLayout title="管理台 · GeoLearn">
+  <SiteHeader />
+
+  <main>
+    <AdminConsole client:only="vue" />
+  </main>
+</BaseLayout>
+
+<style>
+main {
+  min-height: calc(100svh - 57px);
+}
+</style>

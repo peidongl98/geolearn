@@ -1,0 +1,232 @@
+/* ============================================================================
+ * 共享 UI 原语 —— 卡片 / 按钮 / 表单 / 表格 / 徽标
+ * 只提供「在任意页面都长一样」的通用件；页面专属样式仍写在各自 <style> 里。
+ * 颜色一律取 tokens.css。
+ * ========================================================================== */
+
+/* ---- 卡片 ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+}
+
+.card--plain {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card__title {
+  font-size: var(--fs-md);
+  color: var(--text);
+  margin-bottom: var(--sp-1);
+}
+
+.card__hint {
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+
+/* ---- 按钮 ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 38px;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  transition: background var(--t-base) var(--ease), border-color var(--t-base) var(--ease),
+    opacity var(--t-base) var(--ease);
+}
+.btn:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--text-faint);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--accent-dim);
+  border-color: var(--accent-soft);
+  color: var(--accent-text);
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.btn--danger {
+  color: var(--danger);
+  border-color: #3a2624;
+  background: #1c1413;
+}
+.btn--danger:hover:not(:disabled) {
+  background: #241a18;
+  border-color: var(--danger);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.btn--sm {
+  min-height: 30px;
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-xs);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* ---- 表单 ---- */
+.field {
+  display: block;
+  margin-bottom: var(--sp-4);
+}
+.field__label {
+  display: block;
+  margin-bottom: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+.field__hint {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 var(--sp-3);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  transition: border-color var(--t-base) var(--ease);
+}
+.input::placeholder {
+  color: var(--text-faint);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent-soft);
+}
+.input:disabled {
+  opacity: 0.5;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+/* ---- 表格 ---- */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.table th,
+.table td {
+  padding: var(--sp-3) var(--sp-4);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.table th {
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.03em;
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+.table tbody tr:hover {
+  background: var(--surface-2);
+}
+.table td.actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.table td.actions .btn + .btn {
+  margin-left: var(--sp-2);
+}
+
+/* 窄屏下表格改成横向滚动，不挤压列 */
+.table-scroll {
+  overflow-x: auto;
+}
+
+/* ---- 徽标 ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.badge--on {
+  color: var(--accent-text);
+  border-color: var(--accent-soft);
+  background: var(--accent-dim);
+}
+.badge--off {
+  color: var(--text-faint);
+}
+.badge--warn {
+  color: var(--warn);
+  border-color: #3a3326;
+  background: #1c1913;
+}
+.badge--danger {
+  color: var(--danger);
+  border-color: #3a2624;
+  background: #1c1413;
+}
+
+/* ---- 空态 ---- */
+.empty {
+  padding: var(--sp-7) var(--sp-4);
+  text-align: center;
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+}
+
+/* ---- 提示条 ---- */
+.alert {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  color: var(--text-dim);
+}
+.alert--error {
+  color: var(--danger);
+  border-color: #3a2624;
+  background: #1c1413;
+}
+.alert--ok {
+  color: var(--accent-text);
+  border-color: var(--accent-soft);
+  background: var(--accent-dim);
+}
